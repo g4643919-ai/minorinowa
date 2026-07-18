@@ -5,78 +5,73 @@ const width = 1000;
 const height = 500;
 
 const chartJSNodeCanvas = new ChartJSNodeCanvas({
-  width,
-  height,
-  backgroundColour: "white",
+    width,
+    height,
+    backgroundColour: "white",
 });
 
-async function createTemperatureGraph(hours, temperatures) {
+async function createGraph(title, yTitle, label, data, color, fileName, hours) {
 
-  const configuration = {
-    type: "line",
+    const configuration = {
+        type: "line",
 
-    data: {
-      labels: hours,
+        data: {
+            labels: hours,
 
-      datasets: [
-        {
-          label: "気温（℃）",
-          data: temperatures,
-          borderColor: "red",
-          backgroundColor: "rgba(255,0,0,0.2)",
-          borderWidth: 3,
-          fill: true,
-          tension: 0.3,
-        },
-      ],
-    },
-
-    options: {
-
-      responsive: false,
-
-      plugins: {
-
-        title: {
-          display: true,
-          text: "宇都宮市　今日の気温推移",
-          font: {
-            size: 22,
-          },
+            datasets: [{
+                label: label,
+                data: data,
+                borderColor: color,
+                backgroundColor: color + "33",
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3,
+            }]
         },
 
-        legend: {
-          display: true,
-        },
+        options: {
 
-      },
+            responsive: false,
 
-      scales: {
+            plugins: {
 
-        y: {
-          title: {
-            display: true,
-            text: "気温（℃）",
-          },
-        },
+                title: {
+                    display: true,
+                    text: title,
+                    font: {
+                        size: 22
+                    }
+                }
 
-        x: {
-          title: {
-            display: true,
-            text: "時間",
-          },
-        },
+            },
 
-      },
+            scales: {
 
-    },
-  };
+                x: {
+                    title: {
+                        display: true,
+                        text: "時間"
+                    }
+                },
 
-  const image = await chartJSNodeCanvas.renderToBuffer(configuration);
+                y: {
+                    title: {
+                        display: true,
+                        text: yTitle
+                    }
+                }
 
-  fs.writeFileSync("./images/temperature.png", image);
+            }
 
-  console.log("気温グラフを保存しました");
+        }
+
+    };
+
+    const image = await chartJSNodeCanvas.renderToBuffer(configuration);
+
+    fs.writeFileSync("./images/" + fileName, image);
+
+    console.log(fileName + " 保存完了");
 }
 
-module.exports = createTemperatureGraph;
+module.exports = createGraph;
